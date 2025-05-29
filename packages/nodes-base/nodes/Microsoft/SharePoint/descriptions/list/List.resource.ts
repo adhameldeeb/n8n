@@ -35,7 +35,7 @@ export const description: INodeProperties[] = [
 			{
 				name: 'Get Many',
 				value: 'getAll',
-				description: 'Retrieve a list of lists',
+				description: 'Retrieve a list of',
 				routing: {
 					request: {
 						method: 'GET',

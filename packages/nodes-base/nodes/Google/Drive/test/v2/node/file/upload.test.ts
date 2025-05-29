@@ -126,7 +126,7 @@ describe('test GoogleDriveV2: file upload', () => {
 			undefined,
 			{ uploadType: 'resumable' },
 			undefined,
-			{ returnFullResponse: true, headers: { 'X-Upload-Content-Type': 'image/jpg' } },
+			{ returnFullResponse: true },
 		);
 		expect(transport.googleApiRequest).toHaveBeenCalledWith(
 			'PATCH',

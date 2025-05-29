@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   n8n-main:
-    image: n8nio/n8n
+    image: n8nio/n8n:1.22.1
     restart: always
     ports:
       - "${N8N_PORT:-5678}:5678"
@@ -53,7 +53,7 @@ services:
       - internal
 
   n8n-worker:
-    image: n8nio/n8n
+    image: n8nio/n8n:1.22.1
     restart: always
     environment:
       - NODE_ENV=${NODE_ENV:-production}
@@ -89,7 +89,7 @@ services:
       - internal
 
   n8n-webhook:
-    image: n8nio/n8n
+    image: n8nio/n8n:1.22.1
     restart: always
     environment:
       - NODE_ENV=${NODE_ENV:-production}
@@ -144,7 +144,7 @@ services:
       - internal
 
   embedding-service:
-    image: vectorai/sentence-transformers-fastapi:latest
+    image: vectorai/sentence-transformers-fastapi:0.2.1
     restart: always
     environment:
       # - MODEL_NAME=sentence-transformers/all-MiniLM-L6-v2 # Some images might use this

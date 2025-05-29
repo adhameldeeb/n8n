@@ -7,7 +7,6 @@ import { useNodeTypesStore } from '@/stores/nodeTypes.store';
 import { useCommunityNodesStore } from '@/stores/communityNodes.store';
 import { captureException } from '@sentry/vue';
 import { N8nText, N8nTooltip, N8nIcon } from '@n8n/design-system';
-import ShieldIcon from 'virtual:icons/fa-solid/shield-alt';
 
 const { activeViewStack } = useViewStacks();
 
@@ -20,7 +19,6 @@ interface DownloadData {
 const publisherName = ref<string | undefined>(undefined);
 const downloads = ref<string | null>(null);
 const verified = ref(false);
-const official = ref(false);
 const communityNodesStore = useCommunityNodesStore();
 const nodeTypesStore = useNodeTypesStore();
 
@@ -43,9 +41,8 @@ async function fetchPackageInfo(packageName: string) {
 	);
 
 	if (communityNodeAttributes) {
-		publisherName.value = communityNodeAttributes.companyName ?? communityNodeAttributes.authorName;
+		publisherName.value = communityNodeAttributes.authorName;
 		downloads.value = formatNumber(communityNodeAttributes.numberOfDownloads);
-		official.value = communityNodeAttributes.isOfficialNode;
 		const packageInfo = communityNodesStore.getInstalledPackages.find(
 			(p) => p.packageName === communityNodeAttributes.packageName,
 		);
@@ -109,21 +106,17 @@ onMounted(async () => {
 		</N8nText>
 		<div :class="$style.separator"></div>
 		<div :class="$style.info">
-			<N8nTooltip v-if="verified" placement="top">
-				<template #content>{{
-					official
-						? i18n.baseText('communityNodeInfo.officialApproved')
-						: i18n.baseText('communityNodeInfo.approved')
-				}}</template>
+			<N8nTooltip placement="top" v-if="verified">
+				<template #content>{{ i18n.baseText('communityNodeInfo.approved') }}</template>
 				<div>
-					<ShieldIcon :class="$style.tooltipIcon" />
+					<FontAwesomeIcon :class="$style.tooltipIcon" icon="check-circle" />
 					<N8nText color="text-light" size="xsmall" bold data-test-id="verified-tag">
 						{{ i18n.baseText('communityNodeInfo.approved.label') }}
 					</N8nText>
 				</div>
 			</N8nTooltip>
 
-			<N8nTooltip v-else placement="top">
+			<N8nTooltip placement="top" v-else>
 				<template #content>{{ i18n.baseText('communityNodeInfo.unverified') }}</template>
 				<div>
 					<FontAwesomeIcon :class="$style.tooltipIcon" icon="cube" />
@@ -153,7 +146,7 @@ onMounted(async () => {
 				<div style="padding-bottom: 8px">
 					{{ i18n.baseText('communityNodeInfo.contact.admin') }}
 				</div>
-				<N8nText v-if="ownerEmailList.length" bold>
+				<N8nText bold v-if="ownerEmailList.length">
 					{{ ownerEmailList.join(', ') }}
 				</N8nText>
 			</N8nText>
@@ -195,13 +188,12 @@ onMounted(async () => {
 .info div {
 	display: flex;
 	align-items: center;
-	gap: var(--spacing-4xs);
+	gap: var(--spacing-3xs);
 }
 
 .tooltipIcon {
 	color: var(--color-text-light);
 	font-size: var(--font-size-2xs);
-	width: 12px;
 }
 
 .contactOwnerHint {

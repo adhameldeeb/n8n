@@ -26,10 +26,6 @@ describe('Usage and plan store', () => {
 						value,
 						warningThreshold,
 					},
-					workflowsHavingEvaluations: {
-						value: 0,
-						limit: 0,
-					},
 				},
 				license: {
 					planId: '',

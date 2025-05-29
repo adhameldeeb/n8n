@@ -38,6 +38,7 @@ describe('useContextMenu', () => {
 		} as never);
 
 		uiStore = useUIStore();
+		uiStore.selectedNodes = selectedNodes;
 		vi.spyOn(uiStore, 'isReadOnlyView', 'get').mockReturnValue(false);
 
 		workflowsStore = useWorkflowsStore();

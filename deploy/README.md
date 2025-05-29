@@ -86,7 +86,7 @@ The `embedding-service` provides an API endpoint to generate vector embeddings f
 -   **API Endpoint Example:** `/encode` (common for `vectorai/sentence-transformers-fastapi`)
 
 **Example: Using n8n HTTP Request Node**
-1.  **URL:** `http://embedding-service:${EMBEDDING_PORT:-8001}/encode`
+1.  **URL:** `http://embedding-service:PORT/encode` (replace `PORT` with the actual port number you configured for `EMBEDDING_PORT` in your `.env` file, e.g., `8001` if you used the default).
     *   *Note: Replace `/encode` if your chosen model/image uses a different endpoint.*
 2.  **Method:** `POST`
 3.  **Send Body:** `true`
@@ -184,7 +184,7 @@ It's crucial to secure your server with a firewall. Here's a basic example using
     ```
     Confirm with `y`.
 
-7.  **Check Status:**
+8.  **Check Status:**
     ```bash
     sudo ufw status verbose
     ```

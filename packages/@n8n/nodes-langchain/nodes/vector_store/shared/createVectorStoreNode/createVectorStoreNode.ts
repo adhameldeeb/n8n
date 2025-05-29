@@ -43,8 +43,7 @@ export const createVectorStoreNode = <T extends VectorStore = VectorStore>(
 			icon: args.meta.icon,
 			iconColor: args.meta.iconColor,
 			group: ['transform'],
-			// 1.2 has changes to VectorStoreInMemory node.
-			version: [1, 1.1, 1.2],
+			version: [1, 1.1],
 			defaults: {
 				name: args.meta.displayName,
 			},

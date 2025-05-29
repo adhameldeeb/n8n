@@ -10,5 +10,4 @@ export interface ActionDropdownItem {
 	disabled?: boolean;
 	shortcut?: KeyboardShortcut;
 	customClass?: string;
-	checked?: boolean;
 }

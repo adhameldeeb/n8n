@@ -51,8 +51,6 @@ export type CommunityNodeDetails = {
 	description: string;
 	packageName: string;
 	installed: boolean;
-	official: boolean;
-	companyName?: string;
 	nodeIcon?: NodeIconSource;
 };
 

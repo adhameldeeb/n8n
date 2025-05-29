@@ -4,6 +4,7 @@ import { ElTag } from 'element-plus';
 
 import { useI18n } from '../../composables/useI18n';
 import type { NodeCreatorTag } from '../../types/node-creator-node';
+import N8nTooltip from '../N8nTooltip';
 
 export interface Props {
 	active?: boolean;
@@ -13,7 +14,6 @@ export interface Props {
 	tag?: NodeCreatorTag;
 	title: string;
 	showActionArrow?: boolean;
-	isOfficial?: boolean;
 }
 
 defineProps<Props>();
@@ -21,8 +21,6 @@ defineProps<Props>();
 defineEmits<{
 	tooltipClick: [e: MouseEvent];
 }>();
-
-defineSlots<{ icon: {}; extraDetails: {}; dragContent: {} }>();
 
 const { t } = useI18n();
 </script>
@@ -51,8 +49,16 @@ const { t } = useI18n();
 					:title="t('nodeCreator.nodeItem.triggerIconTitle')"
 					:class="$style.triggerIcon"
 				/>
-
-				<slot name="extraDetails" />
+				<N8nTooltip
+					v-if="!!$slots.tooltip"
+					placement="top"
+					data-test-id="node-creator-item-tooltip"
+				>
+					<template #content>
+						<slot name="tooltip" />
+					</template>
+					<n8n-icon :class="$style.tooltipIcon" icon="cube" />
+				</N8nTooltip>
 			</div>
 			<p
 				v-if="description"
@@ -115,9 +121,7 @@ const { t } = useI18n();
 	width: 12px;
 }
 .details {
-	display: flex;
 	align-items: center;
-	gap: var(--spacing-3xs);
 }
 .nodeIcon {
 	display: flex;
@@ -137,10 +141,12 @@ const { t } = useI18n();
 }
 
 .aiIcon {
+	margin-left: var(--spacing-3xs);
 	color: var(--color-secondary);
 }
 
 .triggerIcon {
+	margin-left: var(--spacing-3xs);
 	color: var(--color-primary);
 }
 </style>

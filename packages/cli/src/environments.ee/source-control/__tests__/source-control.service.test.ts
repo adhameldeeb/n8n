@@ -11,7 +11,6 @@ import { InstanceSettings } from 'n8n-core';
 
 import { SourceControlPreferencesService } from '@/environments.ee/source-control/source-control-preferences.service.ee';
 import { SourceControlService } from '@/environments.ee/source-control/source-control.service.ee';
-import { ForbiddenError } from '@/errors/response-errors/forbidden.error';
 
 import type { SourceControlImportService } from '../source-control-import.service.ee';
 import type { ExportableCredential } from '../types/exportable-credential';
@@ -142,7 +141,6 @@ describe('SourceControlService', () => {
 		it('conflict depends on the value of `direction`', async () => {
 			// ARRANGE
 			const user = mock<User>();
-			user.role = 'global:admin';
 
 			// Define a credential that does only exist locally.
 			// Pulling this would delete it so it should be marked as a conflict.
@@ -243,21 +241,6 @@ describe('SourceControlService', () => {
 
 			expect(pullResult.find((i) => i.type === 'folders')).toHaveProperty('conflict', true);
 			expect(pushResult.find((i) => i.type === 'folders')).toHaveProperty('conflict', false);
-		});
-
-		it('should throw `ForbiddenError` if direction is pull and user is not allowed to globally pull', async () => {
-			// ARRANGE
-			const user = mock<User>();
-			user.role = 'global:member';
-
-			// ACT
-			await expect(
-				sourceControlService.getStatus(user, {
-					direction: 'pull',
-					verbose: false,
-					preferLocalVersion: false,
-				}),
-			).rejects.toThrowError(ForbiddenError);
 		});
 	});
 });

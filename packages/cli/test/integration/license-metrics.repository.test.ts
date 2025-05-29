@@ -83,7 +83,6 @@ describe('LicenseMetricsRepository', () => {
 				productionExecutions: 3,
 				productionRootExecutions: 3,
 				manualExecutions: 2,
-				evaluations: 0,
 			});
 		});
 
@@ -101,7 +100,6 @@ describe('LicenseMetricsRepository', () => {
 				productionExecutions: 0, // not NaN
 				productionRootExecutions: 0, // not NaN
 				manualExecutions: 0, // not NaN
-				evaluations: 0,
 			});
 		});
 	});

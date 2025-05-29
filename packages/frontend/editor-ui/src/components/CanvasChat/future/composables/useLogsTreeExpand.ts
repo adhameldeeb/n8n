@@ -5,9 +5,8 @@ export function useLogsTreeExpand(entries: ComputedRef<LogEntry[]>) {
 	const collapsedEntries = ref<Record<string, boolean>>({});
 	const flatLogEntries = computed(() => flattenLogEntries(entries.value, collapsedEntries.value));
 
-	function toggleExpanded(treeNode: LogEntry, expand?: boolean) {
-		collapsedEntries.value[treeNode.id] =
-			expand === undefined ? !collapsedEntries.value[treeNode.id] : !expand;
+	function toggleExpanded(treeNode: LogEntry) {
+		collapsedEntries.value[treeNode.id] = !collapsedEntries.value[treeNode.id];
 	}
 
 	return {

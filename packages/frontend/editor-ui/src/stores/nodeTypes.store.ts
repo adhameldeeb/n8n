@@ -1,6 +1,5 @@
 import type {
 	ActionResultRequestDto,
-	CommunityNodeType,
 	OptionsRequestDto,
 	ResourceLocatorRequestDto,
 	ResourceMapperFieldsRequestDto,
@@ -36,7 +35,7 @@ export type NodeTypesStore = ReturnType<typeof useNodeTypesStore>;
 export const useNodeTypesStore = defineStore(STORES.NODE_TYPES, () => {
 	const nodeTypes = ref<NodeTypesByTypeNameAndVersion>({});
 
-	const vettedCommunityNodeTypes = ref<Map<string, CommunityNodeType>>(new Map());
+	const communityPreviews = ref<INodeTypeDescription[]>([]);
 
 	const rootStore = useRootStore();
 
@@ -48,41 +47,34 @@ export const useNodeTypesStore = defineStore(STORES.NODE_TYPES, () => {
 	// #region Computed
 	// ---------------------------------------------------------------------------
 
-	const communityNodeType = computed(() => {
-		return (nodeTypeName: string) => {
-			return vettedCommunityNodeTypes.value.get(nodeTypeName);
-		};
-	});
-
-	const officialCommunityNodeTypes = computed(() =>
-		Array.from(vettedCommunityNodeTypes.value.values())
-			.filter(({ isOfficialNode, isInstalled }) => isOfficialNode && !isInstalled)
-			.map(({ nodeDescription }) => nodeDescription),
-	);
-
-	const unofficialCommunityNodeTypes = computed(() =>
-		Array.from(vettedCommunityNodeTypes.value.values())
-			.filter(({ isOfficialNode, isInstalled }) => !isOfficialNode && !isInstalled)
-			.map(({ nodeDescription }) => nodeDescription),
-	);
-
 	const communityNodesAndActions = computed(() => {
-		return actionsGenerator.generateMergedNodesAndActions(unofficialCommunityNodeTypes.value, []);
+		return actionsGenerator.generateMergedNodesAndActions(communityPreviews.value, []);
 	});
 
 	const allNodeTypes = computed(() => {
-		return Object.values(nodeTypes.value).flatMap((nodeType) =>
-			Object.keys(nodeType).map((version) => nodeType[Number(version)]),
+		return Object.values(nodeTypes.value).reduce<INodeTypeDescription[]>(
+			(allNodeTypes, nodeType) => {
+				const versionNumbers = Object.keys(nodeType).map(Number);
+				const allNodeVersions = versionNumbers.map((version) => nodeType[version]);
+
+				return [...allNodeTypes, ...allNodeVersions];
+			},
+			[],
 		);
 	});
 
 	const allLatestNodeTypes = computed(() => {
-		return Object.values(nodeTypes.value)
-			.map((nodeVersions) => {
+		return Object.values(nodeTypes.value).reduce<INodeTypeDescription[]>(
+			(allLatestNodeTypes, nodeVersions) => {
 				const versionNumbers = Object.keys(nodeVersions).map(Number);
-				return nodeVersions[Math.max(...versionNumbers)];
-			})
-			.filter(Boolean);
+				const latestNodeVersion = nodeVersions[Math.max(...versionNumbers)];
+
+				if (!latestNodeVersion) return allLatestNodeTypes;
+
+				return [...allLatestNodeTypes, latestNodeVersion];
+			},
+			[],
+		);
 	});
 
 	const getNodeType = computed(() => {
@@ -167,9 +159,7 @@ export const useNodeTypesStore = defineStore(STORES.NODE_TYPES, () => {
 	});
 
 	const visibleNodeTypes = computed(() => {
-		return allLatestNodeTypes.value
-			.concat(officialCommunityNodeTypes.value)
-			.filter((nodeType) => !nodeType.hidden);
+		return allLatestNodeTypes.value.filter((nodeType: INodeTypeDescription) => !nodeType.hidden);
 	});
 
 	const nativelyNumberSuffixedDefaults = computed(() => {
@@ -370,15 +360,11 @@ export const useNodeTypesStore = defineStore(STORES.NODE_TYPES, () => {
 			return;
 		}
 		try {
-			const communityNodeTypes = await nodeTypesApi.fetchCommunityNodeTypes(
+			communityPreviews.value = await nodeTypesApi.fetchCommunityNodeTypes(
 				rootStore.restApiContext,
 			);
-
-			vettedCommunityNodeTypes.value = new Map(
-				communityNodeTypes.map((nodeType) => [nodeType.name, nodeType]),
-			);
 		} catch (error) {
-			vettedCommunityNodeTypes.value = new Map();
+			communityPreviews.value = [];
 		}
 	};
 
@@ -416,7 +402,6 @@ export const useNodeTypesStore = defineStore(STORES.NODE_TYPES, () => {
 		visibleNodeTypesByInputConnectionTypeNames,
 		isConfigurableNode,
 		communityNodesAndActions,
-		communityNodeType,
 		getResourceMapperFields,
 		getLocalResourceMapperFields,
 		getNodeParameterActionResult,

@@ -55,7 +55,6 @@ import type {
 	AI_OTHERS_NODE_CREATOR_VIEW,
 	ROLE,
 	AI_UNCATEGORIZED_CATEGORY,
-	AI_EVALUATION,
 } from '@/constants';
 import type { BulkCommand, Undoable } from '@/models/history';
 
@@ -1080,8 +1079,7 @@ export type NodeFilterType =
 	| typeof TRIGGER_NODE_CREATOR_VIEW
 	| typeof AI_NODE_CREATOR_VIEW
 	| typeof AI_OTHERS_NODE_CREATOR_VIEW
-	| typeof AI_UNCATEGORIZED_CATEGORY
-	| typeof AI_EVALUATION;
+	| typeof AI_UNCATEGORIZED_CATEGORY;
 
 export type NodeCreatorOpenSource =
 	| ''
@@ -1094,9 +1092,7 @@ export type NodeCreatorOpenSource =
 	| 'node_connection_action'
 	| 'node_connection_drop'
 	| 'notice_error_message'
-	| 'add_node_button'
-	| 'add_evaluation_trigger_button'
-	| 'add_evaluation_node_button';
+	| 'add_node_button';
 
 export interface INodeCreatorState {
 	itemsFilter: string;
@@ -1322,10 +1318,6 @@ export type UsageState = {
 				value: number;
 				warningThreshold: number; // hardcoded value in BE
 			};
-			workflowsHavingEvaluations: {
-				limit: number; // -1 for unlimited, from license
-				value: number;
-			};
 		};
 		license: {
 			planId: string; // community
@@ -1474,8 +1466,7 @@ export type CloudUpdateLinkSourceType =
 	| 'external-secrets'
 	| 'rbac'
 	| 'debug'
-	| 'insights'
-	| 'evaluations';
+	| 'insights';
 
 export type UTMCampaign =
 	| 'upgrade-custom-data-filter'
@@ -1499,8 +1490,7 @@ export type UTMCampaign =
 	| 'upgrade-external-secrets'
 	| 'upgrade-rbac'
 	| 'upgrade-debug'
-	| 'upgrade-insights'
-	| 'upgrade-evaluations';
+	| 'upgrade-insights';
 
 export type N8nBanners = {
 	[key in BannerName]: {

@@ -7,13 +7,7 @@ import type {
 } from 'n8n-workflow';
 
 import type { IAirtopResponse } from './types';
-import { BASE_URL, N8N_VERSION } from '../constants';
-
-const defaultHeaders = {
-	'Content-Type': 'application/json',
-	'x-airtop-sdk-environment': 'n8n',
-	'x-airtop-sdk-version': N8N_VERSION,
-};
+import { BASE_URL } from '../constants';
 
 export async function apiRequest(
 	this: IExecuteFunctions | ILoadOptionsFunctions,
@@ -23,7 +17,9 @@ export async function apiRequest(
 	query: IDataObject = {},
 ) {
 	const options: IHttpRequestOptions = {
-		headers: defaultHeaders,
+		headers: {
+			'Content-Type': 'application/json',
+		},
 		method,
 		body,
 		qs: query,

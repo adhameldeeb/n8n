@@ -29,7 +29,6 @@ import { useSettingsStore } from '@/stores/settings.store';
 import { SEND_AND_WAIT_OPERATION } from 'n8n-workflow';
 import type { NodeIconSource } from '../../../utils/nodeIcon';
 import type { CommunityNodeDetails, ViewStack } from './composables/useViewStacks';
-import { useNodeTypesStore } from '../../../stores/nodeTypes.store';
 
 const COMMUNITY_NODE_TYPE_PREVIEW_TOKEN = '-preview';
 
@@ -265,8 +264,6 @@ export function prepareCommunityNodeDetailsViewStack(
 ): ViewStack {
 	const installed = !isNodePreviewKey(item.key);
 	const packageName = removePreviewToken(item.key.split('.')[0]);
-	const nodeTypesStore = useNodeTypesStore();
-	const nodeType = nodeTypesStore.communityNodeType(removePreviewToken(item.key));
 
 	const communityNodeDetails: CommunityNodeDetails = {
 		title: item.properties.displayName,
@@ -274,9 +271,7 @@ export function prepareCommunityNodeDetailsViewStack(
 		key: item.key,
 		nodeIcon,
 		installed,
-		official: nodeType?.isOfficialNode ?? false,
 		packageName,
-		companyName: nodeType?.companyName,
 	};
 
 	if (nodeActions.length) {

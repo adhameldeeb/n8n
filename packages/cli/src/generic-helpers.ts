@@ -4,6 +4,7 @@ import type {
 	WorkflowEntity,
 	TagEntity,
 	AnnotationTagEntity,
+	TestDefinition,
 } from '@n8n/db';
 import { validate } from 'class-validator';
 
@@ -13,6 +14,7 @@ import { BadRequestError } from './errors/response-errors/bad-request.error';
 export async function validateEntity(
 	entity:
 		| WorkflowEntity
+		| TestDefinition
 		| CredentialsEntity
 		| TagEntity
 		| AnnotationTagEntity

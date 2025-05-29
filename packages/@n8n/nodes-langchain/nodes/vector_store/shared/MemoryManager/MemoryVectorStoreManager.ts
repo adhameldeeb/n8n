@@ -124,10 +124,6 @@ export class MemoryVectorStoreManager {
 		}
 	}
 
-	getMemoryKeysList(): string[] {
-		return Array.from(this.vectorStoreBuffer.keys());
-	}
-
 	/**
 	 * Get or create a vector store by key
 	 */

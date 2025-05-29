@@ -100,7 +100,6 @@ export class InsightsCollectionService {
 
 		// Wait for all in-progress asynchronous flushes
 		// Flush any remaining events
-		this.logger.debug('Flushing remaining insights before shutdown');
 		await Promise.all([...this.flushesInProgress, this.flushEvents()]);
 	}
 
@@ -145,21 +144,18 @@ export class InsightsCollectionService {
 		}
 
 		if (!this.isAsynchronouslySavingInsights) {
-			this.logger.debug('Flushing insights synchronously (shutdown in progress)');
 			// If we are not asynchronously saving insights, we need to flush the events
 			await this.flushEvents();
 		}
 
 		// If the buffer is full, flush the events asynchronously
 		if (this.bufferedInsights.size >= this.insightsConfig.flushBatchSize) {
-			this.logger.debug(`Buffer is full (${this.bufferedInsights.size} insights), flushing events`);
 			// Fire and forget flush to avoid blocking the workflow execute after handler
 			void this.flushEvents();
 		}
 	}
 
 	private async saveInsightsMetadataAndRaw(insightsRawToInsertBuffer: Set<BufferedInsight>) {
-		this.logger.debug(`Flushing ${insightsRawToInsertBuffer.size} insights`);
 		const workflowIdNames: Map<string, string> = new Map();
 
 		for (const event of insightsRawToInsertBuffer) {
@@ -192,7 +188,6 @@ export class InsightsCollectionService {
 			return acc;
 		}, [] as InsightsMetadata[]);
 
-		this.logger.debug(`Saving ${metadataToUpsert.length} insights metadata for workflows`);
 		await this.insightsMetadataRepository.upsert(metadataToUpsert, ['workflowId']);
 
 		const upsertMetadata = await this.insightsMetadataRepository.findBy({
@@ -220,7 +215,6 @@ export class InsightsCollectionService {
 			events.push(insight);
 		}
 
-		this.logger.debug(`Inserting ${events.length} insights raw`);
 		await this.insightsRawRepository.insert(events);
 	}
 

@@ -27,7 +27,7 @@ export const STORES = {
 	BECOME_TEMPLATE_CREATOR: 'becomeTemplateCreator',
 	PROJECTS: 'projects',
 	API_KEYS: 'apiKeys',
-	EVALUATION: 'evaluation',
+	TEST_DEFINITION: 'testDefinition',
 	FOLDERS: 'folders',
 	MODULES: 'modules',
 } as const;

@@ -11,7 +11,7 @@ import { useSettingsStore } from '@/stores/settings.store';
 import { useTemplatesStore } from '@/stores/templates.store';
 import { useUIStore } from '@/stores/ui.store';
 import { useSSOStore } from '@/stores/sso.store';
-import { useEvaluationStore } from '@/stores/evaluation.store.ee';
+import { useTestDefinitionStore } from '@/stores/testDefinition.store.ee';
 import { EnterpriseEditionFeature, VIEWS, EDITABLE_CANVAS_VIEWS } from '@/constants';
 import { useTelemetry } from '@/composables/useTelemetry';
 import { middleware } from '@/utils/rbac/middleware';
@@ -20,7 +20,7 @@ import { initializeAuthenticatedFeatures, initializeCore } from '@/init';
 import { tryToParseNumber } from '@/utils/typesUtils';
 import { projectsRoutes } from '@/routes/projects.routes';
 import { insightsRoutes } from '@/features/insights/insights.router';
-import TestRunDetailView from '@/views/Evaluations.ee/TestRunDetailView.vue';
+import TestDefinitionRunDetailView from './views/TestDefinition/TestDefinitionRunDetailView.vue';
 
 const ChangePasswordView = async () => await import('./views/ChangePasswordView.vue');
 const ErrorView = async () => await import('./views/ErrorView.vue');
@@ -62,9 +62,14 @@ const SettingsExternalSecrets = async () => await import('./views/SettingsExtern
 const WorkerView = async () => await import('./views/WorkerView.vue');
 const WorkflowHistory = async () => await import('@/views/WorkflowHistory.vue');
 const WorkflowOnboardingView = async () => await import('@/views/WorkflowOnboardingView.vue');
-const EvaluationsView = async () => await import('@/views/Evaluations.ee/EvaluationsView.vue');
-const EvaluationRootView = async () =>
-	await import('@/views/Evaluations.ee/EvaluationsRootView.vue');
+const TestDefinitionListView = async () =>
+	await import('./views/TestDefinition/TestDefinitionListView.vue');
+const TestDefinitionNewView = async () =>
+	await import('./views/TestDefinition/TestDefinitionNewView.vue');
+const TestDefinitionEditView = async () =>
+	await import('./views/TestDefinition/TestDefinitionEditView.vue');
+const TestDefinitionRootView = async () =>
+	await import('./views/TestDefinition/TestDefinitionRootView.vue');
 
 function getTemplatesRedirect(defaultRedirect: VIEWS[keyof VIEWS]): { name: string } | false {
 	const settingsStore = useSettingsStore();
@@ -259,34 +264,47 @@ export const routes: RouteRecordRaw[] = [
 	},
 	{
 		path: '/workflow/:name/evaluation',
-		name: VIEWS.EVALUATION,
 		components: {
-			default: EvaluationRootView,
+			default: TestDefinitionRootView,
 			header: MainHeader,
 			sidebar: MainSidebar,
 		},
-		props: {
-			default: true,
-		},
+		props: true,
 		meta: {
 			keepWorkflowAlive: true,
 			middleware: ['authenticated', 'custom'],
 			middlewareOptions: {
-				custom: () => useEvaluationStore().isFeatureEnabled,
+				custom: () => useTestDefinitionStore().isFeatureEnabled,
 			},
 		},
 		children: [
 			{
 				path: '',
-				name: VIEWS.EVALUATION_EDIT,
-				component: EvaluationsView,
+				name: VIEWS.TEST_DEFINITION,
+				component: TestDefinitionListView,
 				props: true,
 			},
 			{
-				path: 'test-runs/:runId',
-				name: VIEWS.EVALUATION_RUNS_DETAIL,
-				component: TestRunDetailView,
+				path: 'new',
+				name: VIEWS.NEW_TEST_DEFINITION,
+				component: TestDefinitionNewView,
 				props: true,
+			},
+			{
+				path: ':testId',
+				name: VIEWS.TEST_DEFINITION_EDIT,
+				props: true,
+				components: {
+					default: TestDefinitionEditView,
+				},
+			},
+			{
+				path: ':testId/runs/:runId',
+				name: VIEWS.TEST_DEFINITION_RUNS_DETAIL,
+				props: true,
+				components: {
+					default: TestDefinitionRunDetailView,
+				},
 			},
 		],
 	},

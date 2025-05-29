@@ -822,43 +822,24 @@ export class Jira implements INodeType {
 						}
 					}
 					if (returnAll) {
-						if (jiraVersion === 'server' || jiraVersion === 'serverPat') {
-							responseData = await jiraSoftwareCloudApiRequestAllItems.call(
-								this,
-								'issues',
-								'/api/2/search',
-								'POST',
-								body,
-							);
-						} else {
-							responseData = await jiraSoftwareCloudApiRequestAllItems.call(
-								this,
-								'issues',
-								'/api/2/search/jql',
-								'POST',
-								body,
-								{},
-								'token',
-							);
-						}
+						responseData = await jiraSoftwareCloudApiRequestAllItems.call(
+							this,
+							'issues',
+							'/api/2/search/jql',
+							'POST',
+							body,
+							{},
+							'token',
+						);
 					} else {
 						const limit = this.getNodeParameter('limit', i);
 						body.maxResults = limit;
-						if (jiraVersion === 'server' || jiraVersion === 'serverPat') {
-							responseData = await jiraSoftwareCloudApiRequest.call(
-								this,
-								'/api/2/search',
-								'POST',
-								body,
-							);
-						} else {
-							responseData = await jiraSoftwareCloudApiRequest.call(
-								this,
-								'/api/2/search/jql',
-								'POST',
-								body,
-							);
-						}
+						responseData = await jiraSoftwareCloudApiRequest.call(
+							this,
+							'/api/2/search/jql',
+							'POST',
+							body,
+						);
 						responseData = responseData.issues;
 					}
 

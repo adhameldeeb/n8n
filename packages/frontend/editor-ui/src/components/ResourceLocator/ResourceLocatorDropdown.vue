@@ -128,8 +128,7 @@ function openUrl(event: MouseEvent, url: string) {
 
 function onKeyDown(e: KeyboardEvent) {
 	if (e.key === 'ArrowDown') {
-		// hoverIndex 0 is reserved for the "add new resource" item
-		if (hoverIndex.value < sortedResources.value.length) {
+		if (hoverIndex.value < sortedResources.value.length - 1) {
 			hoverIndex.value++;
 
 			if (resultsContainerRef.value && itemsRef.value.length === 1) {
@@ -156,12 +155,7 @@ function onKeyDown(e: KeyboardEvent) {
 			}
 		}
 	} else if (e.key === 'Enter') {
-		if (hoverIndex.value === 0 && props.allowNewResources.label) {
-			emit('addResourceClick');
-			return;
-		}
-
-		const selected = sortedResources.value[hoverIndex.value - 1]?.value;
+		const selected = sortedResources.value[hoverIndex.value]?.value;
 
 		// Selected resource can be empty when loading or empty results
 		if (selected) {
@@ -231,11 +225,7 @@ defineExpose({ isWithinDropdown });
 				ref="searchRef"
 				:model-value="filter"
 				:clearable="true"
-				:placeholder="
-					allowNewResources.label
-						? i18n.baseText('resourceLocator.placeholder.searchOrCreate')
-						: i18n.baseText('resourceLocator.placeholder.search')
-				"
+				:placeholder="i18n.baseText('resourceLocator.search.placeholder')"
 				data-test-id="rlc-search"
 				@update:model-value="onFilterInput"
 			>
@@ -263,7 +253,7 @@ defineExpose({ isWithinDropdown });
 				v-if="allowNewResources.label"
 				key="addResourceKey"
 				ref="itemsRef"
-				data-test-id="rlc-item-add-resource"
+				data-test-id="rlc-item"
 				:class="{
 					[$style.resourceItem]: true,
 					[$style.hovering]: hoverIndex === 0,

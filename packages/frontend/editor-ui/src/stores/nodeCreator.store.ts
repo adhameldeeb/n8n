@@ -181,9 +181,11 @@ export const useNodeCreatorStore = defineStore(STORES.NODE_CREATOR, () => {
 			return;
 		}
 
-		const { type, mode } = parseCanvasConnectionHandleString(connection.sourceHandle);
+		const { type, index, mode } = parseCanvasConnectionHandleString(connection.sourceHandle);
 
 		uiStore.lastSelectedNode = sourceNode.name;
+		uiStore.lastSelectedNodeEndpointUuid = connection.sourceHandle ?? null;
+		uiStore.lastSelectedNodeOutputIndex = index;
 
 		if (isVueFlowConnection(connection)) {
 			uiStore.lastInteractedWithNodeConnection = connection;
@@ -217,45 +219,6 @@ export const useNodeCreatorStore = defineStore(STORES.NODE_CREATOR, () => {
 			source,
 			createNodeActive: true,
 			nodeCreatorView: TRIGGER_NODE_CREATOR_VIEW,
-		});
-	}
-
-	function openNodeCreatorForActions(node: string, eventSource?: NodeCreatorOpenSource) {
-		const actionNode = allNodeCreatorNodes.value.find((i) => i.key === node);
-
-		if (!actionNode) {
-			return;
-		}
-
-		const nodeActions = actions.value[actionNode.key];
-
-		const transformedActions = nodeActions?.map((a) =>
-			transformNodeType(a, actionNode.properties.displayName, 'action'),
-		);
-
-		ndvStore.activeNodeName = null;
-		setSelectedView(REGULAR_NODE_CREATOR_VIEW);
-		setNodeCreatorState({
-			source: eventSource,
-			createNodeActive: true,
-			nodeCreatorView: REGULAR_NODE_CREATOR_VIEW,
-		});
-
-		setTimeout(() => {
-			useViewStacks().pushViewStack(
-				{
-					subcategory: '*',
-					title: actionNode.properties.displayName,
-					nodeIcon: {
-						type: 'icon',
-						name: 'check-double',
-					},
-					rootView: 'Regular',
-					mode: 'actions',
-					items: transformedActions,
-				},
-				{ resetStacks: true },
-			);
 		});
 	}
 
@@ -450,7 +413,6 @@ export const useNodeCreatorStore = defineStore(STORES.NODE_CREATOR, () => {
 		openSelectiveNodeCreator,
 		openNodeCreatorForConnectingNode,
 		openNodeCreatorForTriggerNodes,
-		openNodeCreatorForActions,
 		onCreatorOpened,
 		onNodeFilterChanged,
 		onCategoryExpanded,

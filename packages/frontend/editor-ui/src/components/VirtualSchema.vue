@@ -55,7 +55,6 @@ type Props = {
 	connectionType?: NodeConnectionType;
 	search?: string;
 	compact?: boolean;
-	outputIndex?: number;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -67,7 +66,6 @@ const props = withDefaults(defineProps<Props>(), {
 	search: '',
 	mappingEnabled: false,
 	compact: false,
-	outputIndex: undefined,
 });
 
 const telemetry = useTelemetry();
@@ -115,14 +113,7 @@ const getNodeSchema = async (fullNode: INodeUi, connectedNode: IConnectedNode) =
 			runIndex: getLastRunIndexWithData(fullNode.name, outputIndex, props.connectionType),
 		}))
 		.filter(({ runIndex }) => runIndex !== -1);
-
-	// If outputIndex is specified, only use data from that specific output branch
-	const filteredOutputsWithData =
-		props.outputIndex !== undefined
-			? connectedOutputsWithData.filter(({ outputIndex }) => outputIndex === props.outputIndex)
-			: connectedOutputsWithData;
-
-	const nodeData = filteredOutputsWithData
+	const nodeData = connectedOutputsWithData
 		.map(({ outputIndex, runIndex }) =>
 			getNodeInputData(fullNode, runIndex, outputIndex, props.paneType, props.connectionType),
 		)
